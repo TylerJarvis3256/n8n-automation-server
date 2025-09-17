@@ -33,3 +33,5 @@ volumes:
     external: true
   n8n_data:
     external: true
+  postgres_data:
+    external: true

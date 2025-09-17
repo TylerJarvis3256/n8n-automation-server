@@ -1,0 +1,35 @@
+# CRITICAL - Never commit secrets
+.env
+.env.*
+*.env
+
+# n8n data directories
+n8n_data/
+local_files/
+postgres_data/
+
+# Caddy certificates and data
+caddy_data/
+caddy_config/certificates/
+caddy_config/locks/
+
+# Backup files
+*.backup
+*.sql
+backups/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.swp
