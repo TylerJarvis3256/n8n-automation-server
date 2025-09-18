@@ -13,7 +13,7 @@ services:
       - ${DATA_FOLDER}/caddy_config/Caddyfile:/etc/caddy/Caddyfile
 
   n8n:
-    image: docker.n8n.io/n8nio/n8n
+    image: n8n-puppeteer:latest
     restart: always
     ports:
       - 5678:5678
@@ -24,10 +24,41 @@ services:
       - NODE_ENV=production
       - WEBHOOK_URL=https://${SUBDOMAIN}.${DOMAIN_NAME}/
       - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
+      # ADD THESE AUTH VARIABLES
+      - N8N_BASIC_AUTH_ACTIVE=${N8N_BASIC_AUTH_ACTIVE}
+      - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD}
+      # ADD THESE DATABASE VARIABLES
+      - DB_TYPE=${DB_TYPE}
+      - DB_POSTGRESDB_DATABASE=${DB_POSTGRESDB_DATABASE}
+      - DB_POSTGRESDB_HOST=${DB_POSTGRESDB_HOST}
+      - DB_POSTGRESDB_PORT=${DB_POSTGRESDB_PORT}
+      - DB_POSTGRESDB_USER=${DB_POSTGRESDB_USER}
+      - DB_POSTGRESDB_PASSWORD=${DB_POSTGRESDB_PASSWORD}
+      # ADD ENCRYPTION KEY
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      # ADD THESE FOR PUPPETEER
+      - NODE_FUNCTION_ALLOW_BUILTIN=*
+      - NODE_FUNCTION_ALLOW_EXTERNAL=*
     volumes:
       - n8n_data:/home/node/.n8n
       - ${DATA_FOLDER}/local_files:/files
-      
+    depends_on:
+      - postgres
+
+  # ADD THE ENTIRE POSTGRES SERVICE
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_POSTGRESDB_USER}
+      - POSTGRES_PASSWORD=${DB_POSTGRESDB_PASSWORD}
+      - POSTGRES_DB=${DB_POSTGRESDB_DATABASE}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
 volumes:
   caddy_data:
     external: true
